@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>База данных компьютеров с AI-мессенджером</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4a76a8;
+            --secondary-color: #5e81a8;
+            --background-color: #f0f2f5;
+            --card-color: #ffffff;
+            --text-color: #000000;
+            --border-color: #dce1e6;
+            --success-color: #4caf50;
+            --danger-color: #f44336;
+            --warning-color: #ff9800;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            transition: background-color 0.3s;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .auth-form {
+            background-color: var(--card-color);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .auth-form h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #3a5a80;
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-warning {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .sidebar {
+            width: 280px;
+            background-color: var(--card-color);
+            border-right: 1px solid var(--border-color);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s;
+        }
+
+        .header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .computers-section {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .messenger-section {
+            width: 400px;
+            border-left: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s;
+        }
+
+        .section-title {
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .computer-form, .computer-card {
+            background-color: var(--card-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(74, 118, 168, 0.2);
+        }
+
+        .computer-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+        }
+
+        .computer-card h3 {
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .computer-card p {
+            margin-bottom: 5px;
+        }
+
+        .computer-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .messenger-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .messages-container {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background-color: var(--background-color);
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            border-radius: 10px;
+            max-width: 80%;
+            position: relative;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            background-color: var(--primary-color);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 0;
+        }
+
+        .message.other-user {
+            background-color: #e5e5ea;
+            color: black;
+            border-bottom-left-radius: 0;
+        }
+
+        .message.ai {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border-bottom-left-radius: 0;
+        }
+
+        .message-system {
+            background-color: #fff3cd;
+            color: #856404;
+            text-align: center;
+            max-width: 100%;
+            font-style: italic;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+        }
+
+        .message-sender {
+            font-weight: bold;
+        }
+
+        .message-time {
+            opacity: 0.7;
+        }
+
+        .message-actions {
+            display: flex;
+            margin-top: 5px;
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .message:hover .message-actions {
+            opacity: 1;
+        }
+
+        .message-actions button {
+            background: none;
+            border: none;
+            color: inherit;
+            padding: 2px 5px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .message-input {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid var(--border-color);
+            background-color: var(--card-color);
+        }
+
+        .message-input input {
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .tab {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            border-bottom: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .tab:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .report-table th, .report-table td {
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            text-align: left;
+        }
+
+        .report-table th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .report-table tr:nth-child(even) {
+            background-color: var(--background-color);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .view-once {
+            position: relative;
+        }
+
+        .view-once::after {
+            content: "Просмотрено";
+            position: absolute;
+            bottom: -20px;
+            right: 0;
+            font-size: 0.7rem;
+            color: var(--danger-color);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .view-once.viewed::after {
+            opacity: 1;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .online-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--success-color);
+            margin-left: 5px;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .dark-theme {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --background-color: #1a1a1a;
+            --card-color: #2d2d2d;
+            --text-color: #e0e0e0;
+            --border-color: #444444;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background-color: var(--success-color);
+            color: white;
+            border-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            transform: translateX(150%);
+            transition: transform 0.3s;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .users-online {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        .users-list {
+            display: flex;
+            margin-left: 10px;
+        }
+
+        .user-badge {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.7rem;
+            margin-left: -5px;
+            border: 2px solid var(--card-color);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #ccc;
+        }
+
+        .report-notepad {
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            white-space: pre;
+            overflow: auto;
+            max-height: 500px;
+            margin-top: 15px;
+        }
+
+        .invite-section {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: var(--card-color);
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .invite-section h3 {
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .phone-input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .phone-input-group input {
+            flex: 1;
+        }
+
+        .users-list-section {
+            margin-top: 20px;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .user-item:last-child {
+            border-bottom: none;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .user-details {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: bold;
+        }
+
+        .user-computer {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .user-status {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--success-color);
+        }
+
+        .user-status.offline {
+            background-color: #ccc;
+        }
+
+        .invitation-link {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            border: 1px dashed #ccc;
+            word-break: break-all;
+            font-size: 0.9rem;
+        }
+
+        .invitation-link a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .invitation-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <!-- Экран авторизации -->
+    <div id="auth-container" class="auth-container">
+        <div class="auth-form" id="login-form-container">
+            <h2>Вход в систему</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login">Имя пользователя или телефон</label>
+                    <input type="text" id="login" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Пароль</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Войти</button>
+            </form>
+            <div style="margin-top: 15px; text-align: center;">
+                <p>Нет аккаунта? <a href="#" id="show-register">Зарегистрироваться</a></p>
+            </div>
+        </div>
+
+        <div class="auth-form" id="register-form" style="display: none;">
+            <h2>Регистрация</h2>
+            <form id="register-user-form">
+                <div class="form-group">
+                    <label for="reg-name">Имя</label>
+                    <input type="text" id="reg-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-phone">Телефон</label>
+                    <input type="tel" id="reg-phone" placeholder="+7 (999) 123-45-67" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-password">Пароль</label>
+                    <input type="password" id="reg-password" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Зарегистрироваться</button>
+            </form>
+            <div style="margin-top: 15px; text-align: center;">
+                <p>Уже есть аккаунт? <a href="#" id="show-login">Войти</a></p>
+            </div>
+        </div>
+
+        <div class="auth-form" id="invite-form" style="display: none;">
+            <h2>Приглашение</h2>
+            <p style="margin-bottom: 15px;">Вы были приглашены в систему. Завершите регистрацию:</p>
+            <form id="complete-invite-form">
+                <div class="form-group">
+                    <label for="invite-name">Ваше имя</label>
+                    <input type="text" id="invite-name" required>
+                </div>
+                <input type="hidden" id="invite-phone-hidden">
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Завершить регистрацию</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Основной интерфейс -->
+    <div id="app-container" class="container" style="display: none;">
+        <div class="sidebar">
+            <h2>База компьютеров</h2>
+            <div class="tabs">
+                <div class="tab active" data-tab="computers">Компьютеры</div>
+                <div class="tab" data-tab="report">Отчеты</div>
+                <div class="tab" data-tab="users">Пользователи</div>
+            </div>
+            <div class="tab-content active" id="computers-tab">
+                <div class="computer-form">
+                    <h3>Добавить компьютер</h3>
+                    <form id="computer-form">
+                        <div class="form-group">
+                            <label for="serial-number">Серийный номер</label>
+                            <input type="text" id="serial-number" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="cpu">Процессор</label>
+                            <input type="text" id="cpu" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="ram">ОЗУ (ГБ)</label>
+                            <input type="number" id="ram" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="os">Операционная система</label>
+                            <input type="text" id="os" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="storage">Память (ГБ)</label>
+                            <input type="number" id="storage" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="status">Состояние</label>
+                            <select id="status" required>
+                                <option value="Работает">Работает</option>
+                                <option value="Требуется ремонт">Требуется ремонт</option>
+                                <option value="На ремонте">На ремонте</option>
+                                <option value="Списан">Списан</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Добавить компьютер</button>
+                    </form>
+                </div>
+                <div class="action-buttons">
+                    <button id="save-changes" class="btn btn-success">Сохранить изменения</button>
+                    <button id="generate-report" class="btn btn-primary">Напечатать отчет</button>
+                </div>
+
+                <div class="invite-section">
+                    <h3>Пригласить пользователя</h3>
+                    <div class="form-group">
+                        <label for="invite-phone">Номер телефона</label>
+                        <input type="tel" id="invite-phone" placeholder="+7 (999) 123-45-67">
+                    </div>
+                    <button id="invite-user" class="btn btn-primary" style="width: 100%;">Отправить приглашение</button>
+                    
+                    <div id="invitation-link-container" style="display: none; margin-top: 15px;">
+                        <div class="invitation-link">
+                            <strong>Ссылка для приглашения:</strong><br>
+                            <a id="invitation-link" href="#" target="_blank"></a>
+                        </div>
+                        <p style="font-size: 0.8rem; margin-top: 5px; color: #666;">Отправьте эту ссылку приглашенному пользователю</p>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-content" id="report-tab">
+                <h3>Отчет по компьютерам</h3>
+                <div id="report-container">
+                    <div class="report-notepad" id="report-notepad">
+                        // Отчет будет отображаться здесь в формате блокнота
+                    </div>
+                </div>
+            </div>
+            <div class="tab-content" id="users-tab">
+                <h3>Пользователи системы</h3>
+                <div id="users-list-container">
+                    <!-- Список пользователей будет здесь -->
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="header">
+                <h1>База данных компьютеров с AI-мессенджером</h1>
+                <div class="user-info">
+                    <div class="avatar" id="user-avatar">ИИ</div>
+                    <div>
+                        <div id="user-name">Иван Иванов</div>
+                        <div style="font-size: 0.8rem;">Онлайн <span class="online-indicator"></span></div>
+                    </div>
+                    <button class="theme-toggle" id="theme-toggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <button class="btn btn-danger" id="logout-btn">Выйти</button>
+                </div>
+            </div>
+            <div class="content">
+                <div class="computers-section">
+                    <h2 class="section-title">Список компьютеров</h2>
+                    <div class="computer-list" id="computer-list">
+                        <div class="empty-state">
+                            <i class="fas fa-laptop"></i>
+                            <h3>Нет компьютеров</h3>
+                            <p>Добавьте первый компьютер с помощью формы слева</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="messenger-section">
+                    <div class="messenger-header">
+                        <h2>AI-мессенджер</h2>
+                        <div class="users-online">
+                            <span>Онлайн:</span>
+                            <div class="users-list">
+                                <div class="user-badge">ИИ</div>
+                                <div class="user-badge">АЛ</div>
+                                <div class="user-badge">МК</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="messages-container" id="messages-container">
+                        <div class="message ai">
+                            <div class="message-header">
+                                <span class="message-sender">AI-помощник</span>
+                                <span class="message-time">10:00</span>
+                            </div>
+                            <div class="message-text">Добро пожаловать в систему! Я ваш AI-помощник. Чем могу помочь?</div>
+                        </div>
+                    </div>
+                    <div class="message-input">
+                        <input type="text" id="message-input" placeholder="Введите сообщение...">
+                        <button id="send-message" class="btn btn-primary">Отправить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification">Уведомление</div>
+
+    <script>
+        // База данных компьютеров (изначально пустая)
+        let computers = [];
+        let messages = JSON.parse(localStorage.getItem('messages')) || [
+            {
+                id: 1,
+                text: "Добро пожаловать в систему! Я ваш AI-помощник. Чем могу помочь?",
+                sender: "ai",
+                senderName: "AI-помощник",
+                timestamp: "10:00",
+                viewed: false
+            }
+        ];
+        let messageIdCounter = parseInt(localStorage.getItem('messageIdCounter')) || 2;
+        let computerIdCounter = parseInt(localStorage.getItem('computerIdCounter')) || 1;
+        
+        // База пользователей
+        let users = JSON.parse(localStorage.getItem('users')) || [
+            { id: 1, name: "Администратор", phone: "+79991234567", password: "admin", role: "admin" },
+            { id: 2, name: "Алексей Ли", phone: "+79991234568", password: "user", role: "user" },
+            { id: 3, name: "Мария Ким", phone: "+79991234569", password: "user", role: "user" }
+        ];
+        let currentUser = null;
+        let pendingInvitations = JSON.parse(localStorage.getItem('pendingInvitations')) || {};
+
+        // Инициализация приложения
+        document.addEventListener('DOMContentLoaded', function() {
+            // Проверяем, есть ли приглашение в URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const invitePhone = urlParams.get('invite');
+            
+            if (invitePhone) {
+                showInviteForm(invitePhone);
+            } else {
+                // Проверяем, авторизован ли пользователь
+                const savedUser = localStorage.getItem('currentUser');
+                if (savedUser) {
+                    currentUser = JSON.parse(savedUser);
+                    showApp();
+                } else {
+                    showAuth();
+                }
+            }
+            
+            setupEventListeners();
+            renderUsersList();
+        });
+
+        // Настройка обработчиков событий
+        function setupEventListeners() {
+            // Форма входа
+            document.getElementById('login-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                login();
+            });
+            
+            // Форма регистрации
+            document.getElementById('register-user-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                register();
+            });
+            
+            // Форма завершения приглашения
+            document.getElementById('complete-invite-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                completeInvitation();
+            });
+            
+            // Переключение между формами входа и регистрации
+            document.getElementById('show-register').addEventListener('click', function(e) {
+                e.preventDefault();
+                document.getElementById('login-form-container').style.display = 'none';
+                document.getElementById('register-form').style.display = 'block';
+            });
+            
+            document.getElementById('show-login').addEventListener('click', function(e) {
+                e.preventDefault();
+                document.getElementById('register-form').style.display = 'none';
+                document.getElementById('invite-form').style.display = 'none';
+                document.getElementById('login-form-container').style.display = 'block';
+            });
+
+            // Форма добавления компьютера
+            document.getElementById('computer-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                addComputer();
+            });
+
+            // Кнопка отправки сообщения
+            document.getElementById('send-message').addEventListener('click', sendMessage);
+            document.getElementById('message-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+
+            // Кнопка сохранения изменений
+            document.getElementById('save-changes').addEventListener('click', saveChanges);
+
+            // Кнопка генерации отчета
+            document.getElementById('generate-report').addEventListener('click', generateReport);
+
+            // Кнопка приглашения пользователя
+            document.getElementById('invite-user').addEventListener('click', inviteUser);
+
+            // Автоматическое форматирование номера телефона
+            document.getElementById('reg-phone').addEventListener('input', formatPhoneNumber);
+            document.getElementById('invite-phone').addEventListener('input', formatPhoneNumber);
+
+            // Переключение вкладок
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    this.classList.add('active');
+                    document.getElementById(this.dataset.tab + '-tab').classList.add('active');
+                });
+            });
+
+            // Переключение темы
+            document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+
+            // Кнопка выхода
+            document.getElementById('logout-btn').addEventListener('click', logout);
+        }
+
+        // Форматирование номера телефона
+        function formatPhoneNumber(e) {
+            let input = e.target;
+            let value = input.value.replace(/\D/g, '');
+            
+            if (value.startsWith('7') || value.startsWith('8')) {
+                value = value.substring(1);
+            }
+            
+            let formattedValue = '+7 (';
+            
+            if (value.length > 0) {
+                formattedValue += value.substring(0, 3);
+            }
+            if (value.length > 3) {
+                formattedValue += ') ' + value.substring(3, 6);
+            }
+            if (value.length > 6) {
+                formattedValue += '-' + value.substring(6, 8);
+            }
+            if (value.length > 8) {
+                formattedValue += '-' + value.substring(8, 10);
+            }
+            
+            input.value = formattedValue;
+        }
+
+        // Функция входа
+        function login() {
+            const login = document.getElementById('login').value;
+            const password = document.getElementById('password').value;
+            
+            // Поиск пользователя по имени или телефону
+            const user = users.find(u => (u.name === login || u.phone === login) && u.password === password);
+            
+            if (user) {
+                currentUser = user;
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                showApp();
+                showNotification('Успешный вход!');
+            } else {
+                showNotification('Неверные данные для входа!', 'error');
+            }
+        }
+
+        // Функция регистрации
+        function register() {
+            const name = document.getElementById('reg-name').value;
+            const phone = document.getElementById('reg-phone').value;
+            const password = document.getElementById('reg-password').value;
+            
+            // Проверяем, не занят ли телефон
+            if (users.find(u => u.phone === phone)) {
+                showNotification('Пользователь с таким телефоном уже существует!', 'error');
+                return;
+            }
+            
+            // Создаем нового пользователя
+            const newUser = {
+                id: users.length + 1,
+                name,
+                phone,
+                password,
+                role: 'user'
+            };
+            
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            currentUser = newUser;
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            
+            showApp();
+            showNotification('Регистрация прошла успешно!');
+        }
+
+        // Показать форму приглашения
+        function showInviteForm(phone) {
+            document.getElementById('login-form-container').style.display = 'none';
+            document.getElementById('register-form').style.display = 'none';
+            document.getElementById('invite-form').style.display = 'block';
+            
+            document.getElementById('invite-phone-hidden').value = phone;
+        }
+
+        // Завершение регистрации по приглашению
+        function completeInvitation() {
+            const name = document.getElementById('invite-name').value;
+            const phone = document.getElementById('invite-phone-hidden').value;
+            
+            if (!name) {
+                showNotification('Введите ваше имя!', 'error');
+                return;
+            }
+            
+            // Создаем нового пользователя
+            const newUser = {
+                id: users.length + 1,
+                name,
+                phone,
+                password: 'temp123', // Временный пароль
+                role: 'user'
+            };
+            
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            currentUser = newUser;
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            
+            // Удаляем приглашение из pending
+            delete pendingInvitations[phone];
+            localStorage.setItem('pendingInvitations', JSON.stringify(pendingInvitations));
+            
+            // Очищаем URL от параметра invite
+            window.history.replaceState({}, document.title, window.location.pathname);
+            
+            showApp();
+            showNotification('Регистрация завершена! Добро пожаловать в систему!');
+        }
+
+        // Функция выхода
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            showAuth();
+        }
+
+        // Показать экран авторизации
+        function showAuth() {
+            document.getElementById('auth-container').style.display = 'flex';
+            document.getElementById('app-container').style.display = 'none';
+        }
+
+        // Показать основное приложение
+        function showApp() {
+            document.getElementById('auth-container').style.display = 'none';
+            document.getElementById('app-container').style.display = 'flex';
+            
+            // Обновляем информацию о пользователе
+            document.getElementById('user-name').textContent = currentUser.name;
+            document.getElementById('user-avatar').textContent = currentUser.name.split(' ').map(n => n[0]).join('');
+            
+            renderComputers();
+            renderMessages();
+        }
+
+        // Добавление компьютера
+        function addComputer() {
+            const serialNumber = document.getElementById('serial-number').value;
+            const cpu = document.getElementById('cpu').value;
+            const ram = document.getElementById('ram').value;
+            const os = document.getElementById('os').value;
+            const storage = document.getElementById('storage').value;
+            const status = document.getElementById('status').value;
+
+            const computer = {
+                id: computerIdCounter++,
+                serialNumber,
+                cpu,
+                ram,
+                os,
+                storage,
+                status,
+                addedBy: currentUser.name
+            };
+
+            computers.push(computer);
+            renderComputers();
+            document.getElementById('computer-form').reset();
+            
+            // Сообщение от AI о добавлении компьютера
+            addAIMessage(`Компьютер с серийным номером ${serialNumber} добавлен в базу данных пользователем ${currentUser.name}.`);
+            
+            showNotification('Компьютер успешно добавлен!');
+        }
+
+        // Отображение компьютеров
+        function renderComputers() {
+            const computerList = document.getElementById('computer-list');
+            
+            if (computers.length === 0) {
+                computerList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-laptop"></i>
+                        <h3>Нет компьютеров</h3>
+                        <p>Добавьте первый компьютер с помощью формы слева</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            computerList.innerHTML = '';
+            
+            computers.forEach(computer => {
+                const computerCard = document.createElement('div');
+                computerCard.className = 'computer-card';
+                computerCard.innerHTML = `
+                    <h3>Компьютер #${computer.id}</h3>
+                    <p><strong>Серийный номер:</strong> ${computer.serialNumber}</p>
+                    <p><strong>Процессор:</strong> ${computer.cpu}</p>
+                    <p><strong>ОЗУ:</strong> ${computer.ram} ГБ</p>
+                    <p><strong>ОС:</strong> ${computer.os}</p>
+                    <p><strong>Память:</strong> ${computer.storage} ГБ</p>
+                    <p><strong>Состояние:</strong> ${computer.status}</p>
+                    <p><strong>Добавил:</strong> ${computer.addedBy}</p>
+                    <div class="computer-actions">
+                        <button class="btn btn-danger" onclick="deleteComputer(${computer.id})">Удалить</button>
+                        <button class="btn btn-primary" onclick="editComputer(${computer.id})">Изменить</button>
+                    </div>
+                `;
+                computerList.appendChild(computerCard);
+            });
+        }
+
+        // Удаление компьютера
+        function deleteComputer(id) {
+            computers = computers.filter(computer => computer.id !== id);
+            renderComputers();
+            
+            // Сообщение от AI об удалении компьютера
+            addAIMessage(`Компьютер с ID ${id} удален из базы данных пользователем ${currentUser.name}.`);
+            
+            showNotification('Компьютер удален!');
+        }
+
+        // Редактирование компьютера
+        function editComputer(id) {
+            const computer = computers.find(c => c.id === id);
+            if (!computer) return;
+
+            document.getElementById('serial-number').value = computer.serialNumber;
+            document.getElementById('cpu').value = computer.cpu;
+            document.getElementById('ram').value = computer.ram;
+            document.getElementById('os').value = computer.os;
+            document.getElementById('storage').value = computer.storage;
+            document.getElementById('status').value = computer.status;
+
+            // Удаляем старый компьютер
+            deleteComputer(id);
+            
+            showNotification('Редактирование компьютера');
+        }
+
+        // Сохранение изменений
+        function saveChanges() {
+            localStorage.setItem('computers', JSON.stringify(computers));
+            localStorage.setItem('messages', JSON.stringify(messages));
+            localStorage.setItem('messageIdCounter', messageIdCounter);
+            localStorage.setItem('computerIdCounter', computerIdCounter);
+            localStorage.setItem('users', JSON.stringify(users));
+            localStorage.setItem('pendingInvitations', JSON.stringify(pendingInvitations));
+            
+            showNotification('Изменения сохранены!');
+            
+            // Сообщение от AI о сохранении
+            addAIMessage('Все изменения сохранены в базе данных.');
+        }
+
+        // Генерация отчета
+        function generateReport() {
+            const reportNotepad = document.getElementById('report-notepad');
+            
+            if (computers.length === 0) {
+                reportNotepad.textContent = "Нет данных для отчета";
+                return;
+            }
+            
+            let reportText = "ОТЧЕТ ПО КОМПЬЮТЕРАМ\n";
+            reportText += "=====================\n\n";
+            
+            computers.forEach(computer => {
+                reportText += `Компьютер #${computer.id}\n`;
+                reportText += `Серийный номер: ${computer.serialNumber}\n`;
+                reportText += `Процессор: ${computer.cpu}\n`;
+                reportText += `ОЗУ: ${computer.ram} ГБ\n`;
+                reportText += `ОС: ${computer.os}\n`;
+                reportText += `Память: ${computer.storage} ГБ\n`;
+                reportText += `Состояние: ${computer.status}\n`;
+                reportText += `Добавил: ${computer.addedBy}\n`;
+                reportText += "------------------------\n\n";
+            });
+            
+            reportText += `Всего компьютеров: ${computers.length}\n`;
+            reportText += `Работающих: ${computers.filter(c => c.status === 'Работает').length}\n`;
+            reportText += `Требуют ремонта: ${computers.filter(c => c.status === 'Требуется ремонт').length}\n`;
+            reportText += `На ремонте: ${computers.filter(c => c.status === 'На ремонте').length}\n`;
+            reportText += `Списано: ${computers.filter(c => c.status === 'Списан').length}\n`;
+            
+            reportNotepad.textContent = reportText;
+            
+            // Сообщение от AI о генерации отчета
+            addAIMessage('Сгенерирован отчет по всем компьютерам в формате блокнота.');
+            
+            // Переключаемся на вкладку отчета
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelector('.tab[data-tab="report"]').classList.add('active');
+            document.getElementById('report-tab').classList.add('active');
+        }
+
+        // Отправка сообщения
+        function sendMessage() {
+            const messageInput = document.getElementById('message-input');
+            const messageText = messageInput.value.trim();
+            
+            if (messageText === '') return;
+            
+            // Добавляем сообщение пользователя
+            addMessage(messageText, 'user', currentUser.name);
+            messageInput.value = '';
+            
+            // Имитируем ответ AI
+            setTimeout(() => {
+                let aiResponse = generateAIResponse(messageText);
+                addAIMessage(aiResponse);
+            }, 1000);
+            
+            // Имитируем ответы других пользователей (20% вероятность)
+            if (Math.random() < 0.2) {
+                setTimeout(() => {
+                    const otherUsers = users.filter(u => u.id !== currentUser.id);
+                    if (otherUsers.length > 0) {
+                        const randomUser = otherUsers[Math.floor(Math.random() * otherUsers.length)];
+                        const responses = [
+                            "Интересная информация, спасибо!",
+                            "У меня похожая ситуация с компьютером.",
+                            "Можете подробнее рассказать?",
+                            "Я тоже сталкивался с такой проблемой.",
+                            "Спасибо за информацию!",
+                            "У меня вопрос по этому поводу...",
+                            "Интересно, а как это решить?",
+                            "У меня есть идея по этому вопросу."
+                        ];
+                        const response = responses[Math.floor(Math.random() * responses.length)];
+                        addMessage(response, 'other-user', randomUser.name);
+                    }
+                }, 2000 + Math.random() * 5000);
+            }
+        }
+
+        // Добавление сообщения пользователя
+        function addMessage(text, sender, senderName) {
+            const message = {
+                id: messageIdCounter++,
+                text,
+                sender,
+                senderName,
+                timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                viewed: false
+            };
+            
+            messages.push(message);
+            renderMessages();
+        }
+
+        // Добавление сообщения AI
+        function addAIMessage(text) {
+            const message = {
+                id: messageIdCounter++,
+                text,
+                sender: 'ai',
+                senderName: 'AI-помощник',
+                timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                viewed: false
+            };
+            
+            messages.push(message);
+            renderMessages();
+        }
+
+        // Генерация ответа AI
+        function generateAIResponse(userMessage) {
+            const lowerMessage = userMessage.toLowerCase();
+            
+            // Ответы на приветствия
+            if (lowerMessage.includes('привет') || lowerMessage.includes('здравствуй')) {
+                return 'Здравствуйте! Чем могу помочь?';
+            }
+            
+            // Ответы о состоянии компьютеров
+            if (lowerMessage.includes('компьютер') && lowerMessage.includes('проблем')) {
+                const problemComputers = computers.filter(c => c.status !== 'Работает');
+                if (problemComputers.length > 0) {
+                    return `Я обнаружил ${problemComputers.length} компьютеров с проблемами. Проверьте компьютеры со статусом "Требуется ремонт" или "На ремонте".`;
+                } else {
+                    return 'Все компьютеры в настоящее время работают нормально.';
+                }
+            }
+            
+            if (lowerMessage.includes('сколько компьютеров')) {
+                const total = computers.length;
+                const working = computers.filter(c => c.status === 'Работает').length;
+                const needsRepair = computers.filter(c => c.status === 'Требуется ремонт').length;
+                
+                return `Всего компьютеров: ${total}. Работающих: ${working}. Требуют ремонта: ${needsRepair}.`;
+            }
+            
+            if (lowerMessage.includes('отчет')) {
+                return 'Для генерации отчета нажмите кнопку "Напечатать отчет" в левой панели. Отчет будет открыт в формате блокнота.';
+            }
+            
+            if (lowerMessage.includes('добавить') && lowerMessage.includes('компьютер')) {
+                return 'Для добавления компьютера заполните форму в левой панели. Укажите серийный номер, характеристики и состояние компьютера.';
+            }
+            
+            // Стандартные ответы
+            const responses = [
+                'Понял ваш запрос. Обрабатываю информацию.',
+                'Могу помочь с информацией о компьютерах или сгенерировать отчет.',
+                'Для добавления компьютера заполните форму в левой панели.',
+                'Вы можете просмотреть все компьютеры в списке или сгенерировать отчет.',
+                'Если у вас есть проблемы с компьютером, сообщите мне, и я занесу информацию в базу.',
+                'В системе сейчас ' + computers.length + ' компьютеров.',
+                'Для приглашения новых пользователей используйте форму "Пригласить пользователя".'
+            ];
+            
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+
+        // Отображение сообщений
+        function renderMessages() {
+            const messagesContainer = document.getElementById('messages-container');
+            messagesContainer.innerHTML = '';
+            
+            messages.forEach(message => {
+                const messageElement = document.createElement('div');
+                messageElement.className = `message ${message.sender} ${message.viewed ? 'viewed' : ''}`;
+                
+                let messageHeader = '';
+                if (message.sender !== 'user') {
+                    messageHeader = `
+                        <div class="message-header">
+                            <span class="message-sender">${message.senderName}</span>
+                            <span class="message-time">${message.timestamp}</span>
+                        </div>
+                    `;
+                }
+                
+                messageElement.innerHTML = `
+                    ${messageHeader}
+                    <div class="message-text">${message.text}</div>
+                    <div class="message-actions">
+                        <button onclick="deleteMessage(${message.id})">Удалить</button>
+                        ${message.sender === 'user' ? `<button onclick="editMessage(${message.id})">Изменить</button>` : ''}
+                        ${message.sender !== 'user' ? `<button onclick="markAsViewed(${message.id})">Просмотрено</button>` : ''}
+                    </div>
+                `;
+                
+                messagesContainer.appendChild(messageElement);
+            });
+            
+            // Прокрутка вниз
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Удаление сообщения
+        function deleteMessage(id) {
+            messages = messages.filter(message => message.id !== id);
+            renderMessages();
+            showNotification('Сообщение удалено');
+        }
+
+        // Редактирование сообщения
+        function editMessage(id) {
+            const message = messages.find(m => m.id === id);
+            if (!message) return;
+            
+            const newText = prompt('Измените сообщение:', message.text);
+            if (newText !== null) {
+                message.text = newText;
+                renderMessages();
+                showNotification('Сообщение изменено');
+            }
+        }
+
+        // Пометка сообщения как просмотренного
+        function markAsViewed(id) {
+            const message = messages.find(m => m.id === id);
+            if (message) {
+                message.viewed = true;
+                renderMessages();
+                showNotification('Сообщение помечено как просмотренное');
+            }
+        }
+
+        // Приглашение пользователя по телефону
+        function inviteUser() {
+            const phoneInput = document.getElementById('invite-phone');
+            let phone = phoneInput.value.trim();
+            
+            if (phone === '') {
+                showNotification('Введите номер телефона', 'error');
+                return;
+            }
+            
+            // Нормализуем номер телефона
+            phone = phone.replace(/\D/g, '');
+            if (phone.startsWith('7') || phone.startsWith('8')) {
+                phone = '+7' + phone.substring(1);
+            } else {
+                phone = '+7' + phone;
+            }
+            
+            // Проверяем, не зарегистрирован ли уже пользователь
+            if (users.find(u => u.phone === phone)) {
+                showNotification('Пользователь с таким номером уже зарегистрирован', 'error');
+                return;
+            }
+            
+            // Создаем приглашение
+            const invitationId = 'invite_' + Date.now();
+            pendingInvitations[phone] = {
+                id: invitationId,
+                phone: phone,
+                invitedBy: currentUser.name,
+                date: new Date().toISOString()
+            };
+            
+            localStorage.setItem('pendingInvitations', JSON.stringify(pendingInvitations));
+            
+            // Генерируем ссылку для приглашения
+            const currentUrl = window.location.href.split('?')[0];
+            const inviteUrl = `${currentUrl}?invite=${encodeURIComponent(phone)}`;
+            
+            // Показываем ссылку для приглашения
+            const linkContainer = document.getElementById('invitation-link-container');
+            const linkElement = document.getElementById('invitation-link');
+            
+            linkElement.href = inviteUrl;
+            linkElement.textContent = inviteUrl;
+            linkContainer.style.display = 'block';
+            
+            showNotification(`Приглашение создано для номера ${formatPhoneForDisplay(phone)}`);
+            
+            // Сообщение от AI о приглашении
+            addAIMessage(`Пользователь ${currentUser.name} отправил приглашение на номер ${formatPhoneForDisplay(phone)}.`);
+        }
+
+        // Форматирование телефона для отображения
+        function formatPhoneForDisplay(phone) {
+            const cleanPhone = phone.replace(/\D/g, '');
+            if (cleanPhone.length === 11) {
+                return `+7 (${cleanPhone.substring(1, 4)}) ${cleanPhone.substring(4, 7)}-${cleanPhone.substring(7, 9)}-${cleanPhone.substring(9, 11)}`;
+            }
+            return phone;
+        }
+
+        // Отображение списка пользователей
+        function renderUsersList() {
+            const usersListContainer = document.getElementById('users-list-container');
+            usersListContainer.innerHTML = '';
+            
+            users.forEach(user => {
+                const userItem = document.createElement('div');
+                userItem.className = 'user-item';
+                userItem.innerHTML = `
+                    <div class="user-avatar">${user.name.split(' ').map(n => n[0]).join('')}</div>
+                    <div class="user-details">
+                        <div class="user-name">${user.name}</div>
+                        <div class="user-computer">${user.phone} • ${user.role === 'admin' ? 'Администратор' : 'Пользователь'}</div>
+                    </div>
+                    <div class="user-status ${user.id === currentUser?.id ? '' : 'offline'}"></div>
+                `;
+                usersListContainer.appendChild(userItem);
+            });
+        }
+
+        // Переключение темы
+        function toggleTheme() {
+            document.body.classList.toggle('dark-theme');
+            const themeIcon = document.querySelector('#theme-toggle i');
+            if (document.body.classList.contains('dark-theme')) {
+                themeIcon.className = 'fas fa-sun';
+                showNotification('Темная тема включена');
+            } else {
+                themeIcon.className = 'fas fa-moon';
+                showNotification('Светлая тема включена');
+            }
+        }
+
+        // Показать уведомление
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.backgroundColor = type === 'error' ? 'var(--danger-color)' : 'var(--success-color)';
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
